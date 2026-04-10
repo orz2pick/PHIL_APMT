@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>哲学人格测试 - 发现你的思想底色</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Serif SC', 'Source Han Serif SC', 'SimSun', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #eaeaea;
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #e94560, #ff6b6b, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #a0a0a0;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .author {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(233, 69, 96, 0.15);
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+        }
+
+        .author::before {
+            content: "📺";
+        }
+
+        .intro {
+            background: rgba(255,255,255,0.05);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            border-left: 4px solid #e94560;
+        }
+
+        .intro h2 {
+            color: #e94560;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .intro p {
+            color: #c0c0c0;
+            line-height: 2;
+        }
+
+        .progress-bar {
+            position: sticky;
+            top: 0;
+            background: rgba(26, 26, 46, 0.95);
+            padding: 15px 20px;
+            margin: -20px -20px 30px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #a0a0a0;
+        }
+
+        .progress-fill {
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill-inner {
+            height: 100%;
+            background: linear-gradient(90deg, #e94560, #ff6b6b);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .question-card {
+            background: rgba(255,255,255,0.04);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            border-color: rgba(233, 69, 96, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .question-card.answered {
+            border-color: rgba(76, 175, 80, 0.4);
+            background: rgba(76, 175, 80, 0.05);
+        }
+
+        .question-number {
+            display: inline-block;
+            background: #e94560;
+            color: white;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .question-card.answered .question-number {
+            background: #4caf50;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            margin-bottom: 25px;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            position: relative;
+        }
+
+        .option input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .option label {
+            display: block;
+            padding: 18px 22px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            border: 2px solid transparent;
+            padding-left: 55px;
+        }
+
+        .option label::before {
+            content: "";
+            position: absolute;
+            left: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transition: all 0.25s ease;
+        }
+
+        .option input:checked + label {
+            background: rgba(233, 69, 96, 0.15);
+            border-color: #e94560;
+        }
+
+        .option input:checked + label::before {
+            background: #e94560;
+            border-color: #e94560;
+            box-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
+        }
+
+        .option label:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+        .category-label {
+            display: inline-block;
+            background: rgba(233, 69, 96, 0.2);
+            color: #e94560;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 22px;
+            background: linear-gradient(90deg, #e94560, #ff6b6b);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 40px;
+            font-family: inherit;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(233, 69, 96, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* 结果页面 */
+        .result-section {
+            display: none;
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 25px;
+            padding: 50px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .result-type {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #e94560, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .result-name {
+            font-size: 1.8rem;
+            color: #fff;
+            margin-bottom: 30px;
+        }
+
+        .result-desc {
+            color: #c0c0c0;
+            line-height: 2.2;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .dimension-bars {
+            display: grid;
+            gap: 20px;
+            margin: 40px 0;
+            text-align: left;
+        }
+
+        .dimension {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .dim-label {
+            width: 80px;
+            font-size: 0.9rem;
+            color: #a0a0a0;
+        }
+
+        .dim-bar {
+            flex: 1;
+            height: 35px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .dim-fill {
+            height: 100%;
+            border-radius: 8px;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .dim-fill.a { background: linear-gradient(90deg, #e94560, #ff6b6b); }
+        .dim-fill.b { background: linear-gradient(90deg, #00d9ff, #00a8e8); }
+        .dim-fill.c { background: linear-gradient(90deg, #feca57, #ff9f43); }
+        .dim-fill.d { background: linear-gradient(90deg, #5f27cd, #341f97); }
+
+        .philosopher-match {
+            background: rgba(255,255,255,0.05);
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        .philosopher-match h3 {
+            color: #e94560;
+            margin-bottom: 20px;
+        }
+
+        .philosopher-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .philosopher-tag {
+            background: rgba(233, 69, 96, 0.15);
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+        }
+
+        .restart-btn {
+            display: inline-block;
+            margin-top: 40px;
+            padding: 18px 45px;
+            background: transparent;
+            color: #e94560;
+            border: 2px solid #e94560;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .restart-btn:hover {
+            background: #e94560;
+            color: white;
+        }
+
+        footer {
+            text-align: center;
+            padding: 60px 20px 40px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: #e94560;
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .question-card { padding: 25px; }
+            .result-type { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>哲学人格测试</h1>
+            <p class="subtitle">20题探索你的思想底色 · 发现你的哲学倾向</p>
+            <div class="author">B站UP主：哲学探索者</div>
+        </header>
+
+        <div class="intro">
+            <h2>🧭 测试说明</h2>
+            <p>本测试通过20道精心设计的选择题，从认知方式、伦理取向、自我理解、自由观念等维度，分析你的哲学人格类型。测试结果分为四大类型：<strong>理性主义者</strong>、<strong>实践主义者</strong>、<strong>社群主义者</strong>、<strong>超越主义者</strong>。请根据第一反应作答，无需过度思考。</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-text">
+                <span>答题进度</span>
+                <span id="progress-num">0/20</span>
+            </div>
+            <div class="progress-fill">
+                <div class="progress-fill-inner" id="progress-bar"></div>
+            </div>
+        </div>
+
+        <form id="quiz-form">
+            <!-- 问题将通过JS动态生成 -->
+        </form>
+
+        <div class="result-section" id="result">
+            <!-- 结果将通过JS动态生成 -->
+        </div>
+
+        <footer>
+            <p>Made with ❤️ by B站UP主：哲学探索者</p>
+            <p style="margin-top: 10px;">Hosted on <a href="https://pages.cloudflare.com/" target="_blank">Cloudflare Pages</a></p>
+        </footer>
+    </div>
+
+    <script>
+        const questions = [
+            { category: "认知与世界观", text: "你认为知识的来源主要是：", options: ["理性思考和逻辑推理", "感官经验和实践观察", "社会传统和文化传承", "内心直觉和顿悟"] },
+            { category: "认知与世界观", text: "世界的本质是：", options: ["有客观规律可循的理性结构", "不断变化和流动的过程", "人类共同建构的意义网络", "神秘而不可言说的整体"] },
+            { category: "认知与世界观", text: "面对未知的事物，你的态度是：", options: ["努力分析、拆解、理解其原理", "保持好奇，通过尝试来探索", "参考权威和他人的经验", "接受不确定性，不急于下判断"] },
+            { category: "认知与世界观", text: "你认为真理是：", options: ["永恒不变的客观存在", "在实践中不断修正的假设", "社会共识和语言约定", "超越语言的个人体验"] },
+            { category: "伦理与价值", text: "判断一个行为对错，你更看重：", options: ["是否符合普遍的道德法则", "是否带来好的结果和效益", "是否符合社会规范和期待", "是否出于真诚的本心"] },
+            { category: "伦理与价值", text: "如果为了救五个人必须牺牲一个人，你会：", options: ["拒绝主动伤害任何人，哪怕结果更糟", "权衡利弊，选择损失最小的方案", "听从多数人的意见或社会规则", "凭当下的直觉和情感做决定"] },
+            { category: "伦理与价值", text: "你认为'好人'的核心是：", options: ["有坚定的道德原则和自律", "能创造实际价值和帮助他人", "被社会认可和尊重的人", "内心善良、真诚待人的人"] },
+            { category: "伦理与价值", text: "面对道德冲突，你更信任：", options: ["理性的分析和原则推演", "具体情境中的灵活判断", "传统智慧和经典教导", "内心的良知和情感共鸣"] },
+            { category: "自我与存在", text: "你如何看待'自我'：", options: ["理性的主体，通过思考定义自身", "行动中的存在，通过做事成为自己", "社会关系中的角色和身份", "流动变化的经验之流"] },
+            { category: "自我与存在", text: "人生的意义感主要来自：", options: ["追求真理和智慧", "实现目标和创造价值", "与他人建立深厚联结", "体验生命的丰富和完整"] },
+            { category: "自我与存在", text: "面对死亡，你的态度是：", options: ["思考其哲学意义，追求精神不朽", "珍惜时间，在有限中创造无限", "关注对亲友的影响和责任", "接受为自然循环的一部分"] },
+            { category: "自我与存在", text: "你更认同哪种自我实现方式：", options: ["通过学习和反思提升理性", "通过挑战和突破证明能力", "通过关爱和奉献获得认可", "通过放下执念获得内心自由"] },
+            { category: "自由与选择", text: "你认为自由意味着：", options: ["按照理性做出自主选择", "有能力实现想要的目标", "在社会中享有平等权利", "不被欲望和恐惧所束缚"] },
+            { category: "自由与选择", text: "当选择受限时，你会：", options: ["分析约束条件，寻找最优解", "创造条件，突破现有局限", "调整心态，接受现实安排", "转变视角，看到新的可能"] },
+            { category: "自由与选择", text: "你更认同：", options: ["人应该对自己的选择完全负责", "环境对人的影响不可忽视", "个人选择受社会结构制约", "'选择'本身可能是一种幻觉"] },
+            { category: "社会与生活", text: "理想的社会应该是：", options: ["由理性法则治理的公正秩序", "能最大化整体幸福的系统", "传承优秀传统的和谐共同体", "尊重个体差异的多元生态"] },
+            { category: "社会与生活", text: "面对社会不公，你会：", options: ["分析制度根源，推动结构性改革", "采取实际行动，帮助具体的人", "倡导道德教化，提升社会风气", "关注自身修养，以个体转变影响周围"] },
+            { category: "社会与生活", text: "你更向往的生活方式是：", options: ["沉思冥想、追求智慧的生活", "积极进取、不断超越的生活", "融入社群、守望相助的生活", "简朴自然、随遇而安的生活"] },
+            { category: "综合倾向", text: "如果必须选择一位导师，你会倾向：", options: ["苏格拉底/康德——追问真理，坚守原则", "亚里士多德/密尔——注重实践，追求幸福", "孔子/黑格尔——重视传统，理解整体", "老子/庄子/禅宗——顺应自然，超越分别"] },
+            { category: "综合倾向", text: "用一个词形容你的哲学底色：", options: ["求真", "进取", "和谐", "自在"] }
+        ];
+
+        const resultTypes = {
+            A: { name: "理性主义者", title: "The Rationalist", desc: "你崇尚理性与逻辑，相信通过严谨的思考和分析可以抵达真理。你重视原则的一致性，追求知识的确定性和普遍性。在你的世界里，混乱需要被理解，模糊需要被澄清，而理性是照亮黑暗的火炬。", philosophers: ["苏格拉底", "柏拉图", "笛卡尔", "康德", "罗素"], color: "#e94560" },
+            B: { name: "实践主义者", title: "The Pragmatist", desc: "你注重行动与实效，相信真理在实践中显现，价值在创造中实现。你不满足于抽象的理论，而是渴望将想法转化为现实。你灵活、进取，善于在具体情境中找到最优解，是脚踏实地的梦想家。", philosophers: ["亚里士多德", "培根", "密尔", "杜威", "萨特"], color: "#00d9ff" },
+            C: { name: "社群主义者", title: "The Communitarian", desc: "你重视关系与归属，相信个人在社群中获得意义，传统中蕴含着智慧。你关注人与人之间的联结，追求和谐与共识。对你而言，伦理不是孤立的判断，而是嵌入在具体的社会角色和文化脉络中的实践。", philosophers: ["孔子", "孟子", "黑格尔", "麦金泰尔", "查尔斯·泰勒"], color: "#feca57" },
+            D: { name: "超越主义者", title: "The Transcendentalist", desc: "你向往自由与超越，不拘泥于固定的框架，善于在流动中把握生命的真谛。你直觉敏锐，内心丰富，对神秘和不可言说之物保持开放。你的智慧不在于掌控，而在于顺应；不在于占有，而在于体验。", philosophers: ["老子", "庄子", "斯宾诺莎", "尼采", "海德格尔"], color: "#5f27cd" }
+        };
+
+        // 记录已回答的问题
+        let answeredQuestions = new Set();
+
+        function renderQuestions() {
+            const form = document.getElementById('quiz-form');
+            questions.forEach((q, i) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `card-${i}`;
+                card.innerHTML = `
+                    <span class="category-label">${q.category}</span>
+                    <div class="question-number">${i + 1}</div>
+                    <div class="question-text">${q.text}</div>
+                    <div class="options">
+                        ${q.options.map((opt, j) => `
+                            <div class="option">
+                                <input type="radio" name="q${i}" id="q${i}_${j}" value="${String.fromCharCode(65 + j)}" onchange="handleAnswer(${i})">
+                                <label for="q${i}_${j}">${opt}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                form.appendChild(card);
+            });
+
+            const submitBtn = document.createElement('button');
+            submitBtn.type = 'button';
+            submitBtn.className = 'submit-btn';
+            submitBtn.id = 'submit-btn';
+            submitBtn.textContent = '查看我的哲学人格';
+            submitBtn.onclick = calculateResult;
+            submitBtn.disabled = true;
+            form.appendChild(submitBtn);
+        }
+
+        function handleAnswer(questionIndex) {
+            // 标记该题已回答
+            answeredQuestions.add(questionIndex);
+            
+            // 添加已回答样式
+            const card = document.getElementById(`card-${questionIndex}`);
+            card.classList.add('answered');
+            
+            // 更新进度
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const answered = answeredQuestions.size;
+            const percent = (answered / 20) * 100;
+            
+            document.getElementById('progress-num').textContent = `${answered}/20`;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+            
+            document.getElementById('submit-btn').disabled = answered < 20;
+        }
+
+        function calculateResult() {
+            const form = document.getElementById('quiz-form');
+            const formData = new FormData(form);
+            const counts = { A: 0, B: 0, C: 0, D: 0 };
+            
+            // 遍历所有问题，统计答案
+            for (let i = 0; i < 20; i++) {
+                const value = formData.get(`q${i}`);
+                if (value && counts.hasOwnProperty(value)) {
+                    counts[value]++;
+                }
+            }
+
+            const maxType = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+            const result = resultTypes[maxType];
+
+            // 计算各维度百分比
+            const total = 20;
+            const percentages = {
+                A: Math.round((counts.A / total) * 100),
+                B: Math.round((counts.B / total) * 100),
+                C: Math.round((counts.C / total) * 100),
+                D: Math.round((counts.D / total) * 100)
+            };
+
+            document.getElementById('quiz-form').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'none';
+            
+            const resultSection = document.getElementById('result');
+            resultSection.style.display = 'block';
+            resultSection.innerHTML = `
+                <div class="result-card">
+                    <div class="result-type">${maxType}</div>
+                    <div class="result-name">${result.name} · ${result.title}</div>
+                    <div class="result-desc">${result.desc}</div>
+                    
+                    <div class="dimension-bars">
+                        <div class="dimension">
+                            <span class="dim-label">理性</span>
+                            <div class="dim-bar"><div class="dim-fill a" style="width: ${percentages.A}%">${percentages.A}%</div></div>
+                        </div>
+                        <div class="dimension">
+                            <span class="dim-label">实践</span>
+                            <div class="dim-bar"><div class="dim-fill b" style="width: ${percentages.B}%">${percentages.B}%</div></div>
+                        </div>
+                        <div class="dimension">
+                            <span class="dim-label">社群</span>
+                            <div class="dim-bar"><div class="dim-fill c" style="width: ${percentages.C}%">${percentages.C}%</div></div>
+                        </div>
+                        <div class="dimension">
+                            <span class="dim-label">超越</span>
+                            <div class="dim-bar"><div class="dim-fill d" style="width: ${percentages.D}%">${percentages.D}%</div></div>
+                        </div>
+                    </div>
+
+                    <div class="philosopher-match">
+                        <h3>🎓 与你气质相近的思想家</h3>
+                        <div class="philosopher-list">
+                            ${result.philosophers.map(p => `<span class="philosopher-tag">${p}</span>`).join('')}
+                        </div>
+                    </div>
+
+                    <button class="restart-btn" onclick="location.reload()">重新测试</button>
+                </div>
+            `;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        renderQuestions();
+    </script>
+</body>
+</html>
