@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -272,19 +272,50 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
 
-        .result-type {
-            font-size: 3.5rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-            background: linear-gradient(90deg, #e94560, #feca57);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .result-code {
+            display: inline-block;
+            background: rgba(233, 69, 96, 0.2);
+            border: 2px solid #e94560;
+            padding: 15px 40px;
+            border-radius: 15px;
+            margin-bottom: 20px;
         }
 
-        .result-name {
-            font-size: 1.8rem;
+        .result-code-main {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #e94560;
+            letter-spacing: 5px;
+        }
+
+        .result-code-sub {
+            font-size: 0.9rem;
+            color: #a0a0a0;
+            margin-top: 5px;
+        }
+
+        .result-type {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
             color: #fff;
+        }
+
+        .result-title {
+            font-size: 1.3rem;
+            color: #e94560;
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+        .result-motto {
+            font-size: 1.4rem;
+            color: #feca57;
             margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(254, 202, 87, 0.1);
+            border-radius: 15px;
+            border-left: 4px solid #feca57;
         }
 
         .result-desc {
@@ -366,6 +397,60 @@
             font-size: 1rem;
         }
 
+        .type-comparison {
+            background: rgba(255,255,255,0.03);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        .type-comparison h3 {
+            color: #a0a0a0;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .type-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .type-item {
+            padding: 15px 10px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .type-item.active {
+            opacity: 1;
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .type-item.logi.active { background: rgba(233, 69, 96, 0.2); border: 1px solid #e94560; }
+        .type-item.doer.active { background: rgba(0, 217, 255, 0.2); border: 1px solid #00d9ff; }
+        .type-item.hugs.active { background: rgba(254, 202, 87, 0.2); border: 1px solid #feca57; }
+        .type-item.tran.active { background: rgba(95, 39, 205, 0.2); border: 1px solid #5f27cd; }
+
+        .type-code {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .type-item.logi .type-code { color: #e94560; }
+        .type-item.doer .type-code { color: #00d9ff; }
+        .type-item.hugs .type-code { color: #feca57; }
+        .type-item.tran .type-code { color: #a78bfa; }
+
+        .type-name {
+            font-size: 0.85rem;
+            color: #c0c0c0;
+        }
+
         .restart-btn {
             display: inline-block;
             margin-top: 40px;
@@ -400,7 +485,9 @@
         @media (max-width: 600px) {
             h1 { font-size: 2rem; }
             .question-card { padding: 25px; }
-            .result-type { font-size: 2.5rem; }
+            .result-code-main { font-size: 3rem; }
+            .result-type { font-size: 1.8rem; }
+            .type-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
@@ -414,7 +501,7 @@
 
         <div class="intro">
             <h2>🧭 测试说明</h2>
-            <p>本测试通过20道精心设计的选择题，从认知方式、伦理取向、自我理解、自由观念等维度，分析你的哲学人格类型。测试结果分为四大类型：<strong>理性主义者</strong>、<strong>实践主义者</strong>、<strong>社群主义者</strong>、<strong>超越主义者</strong>。请根据第一反应作答，无需过度思考。</p>
+            <p>本测试通过20道精心设计的选择题，从认知方式、伦理取向、自我理解、自由观念等维度，分析你的哲学人格类型。测试结果分为四大类型：<strong>LOGI（理性主义者）</strong>、<strong>DOER（实践主义者）</strong>、<strong>HUGS（社群主义者）</strong>、<strong>TRAN（超越主义者）</strong>。请根据第一反应作答，无需过度思考。</p>
         </div>
 
         <div class="progress-bar">
@@ -466,10 +553,50 @@
         ];
 
         const resultTypes = {
-            A: { name: "理性主义者", title: "The Rationalist", desc: "你崇尚理性与逻辑，相信通过严谨的思考和分析可以抵达真理。你重视原则的一致性，追求知识的确定性和普遍性。在你的世界里，混乱需要被理解，模糊需要被澄清，而理性是照亮黑暗的火炬。", philosophers: ["苏格拉底", "柏拉图", "笛卡尔", "康德", "罗素"], color: "#e94560" },
-            B: { name: "实践主义者", title: "The Pragmatist", desc: "你注重行动与实效，相信真理在实践中显现，价值在创造中实现。你不满足于抽象的理论，而是渴望将想法转化为现实。你灵活、进取，善于在具体情境中找到最优解，是脚踏实地的梦想家。", philosophers: ["亚里士多德", "培根", "密尔", "杜威", "萨特"], color: "#00d9ff" },
-            C: { name: "社群主义者", title: "The Communitarian", desc: "你重视关系与归属，相信个人在社群中获得意义，传统中蕴含着智慧。你关注人与人之间的联结，追求和谐与共识。对你而言，伦理不是孤立的判断，而是嵌入在具体的社会角色和文化脉络中的实践。", philosophers: ["孔子", "孟子", "黑格尔", "麦金泰尔", "查尔斯·泰勒"], color: "#feca57" },
-            D: { name: "超越主义者", title: "The Transcendentalist", desc: "你向往自由与超越，不拘泥于固定的框架，善于在流动中把握生命的真谛。你直觉敏锐，内心丰富，对神秘和不可言说之物保持开放。你的智慧不在于掌控，而在于顺应；不在于占有，而在于体验。", philosophers: ["老子", "庄子", "斯宾诺莎", "尼采", "海德格尔"], color: "#5f27cd" }
+            A: { 
+                code: "LOGI",
+                fullname: "Logos Intellect",
+                name: "理性主义者", 
+                title: "The Rationalist", 
+                motto: "我思故我在，真理越辩越明",
+                desc: "你崇尚理性与逻辑，相信通过严谨的思考和分析可以抵达真理。你重视原则的一致性，追求知识的确定性和普遍性。在你的世界里，混乱需要被理解，模糊需要被澄清，而理性是照亮黑暗的火炬。", 
+                philosophers: ["苏格拉底", "柏拉图", "笛卡尔", "康德", "罗素"], 
+                color: "#e94560",
+                class: "logi"
+            },
+            B: { 
+                code: "DOER",
+                fullname: "Doer",
+                name: "实践主义者", 
+                title: "The Pragmatist", 
+                motto: "行胜于言，实干兴邦",
+                desc: "你注重行动与实效，相信真理在实践中显现，价值在创造中实现。你不满足于抽象的理论，而是渴望将想法转化为现实。你灵活、进取，善于在具体情境中找到最优解，是脚踏实地的梦想家。", 
+                philosophers: ["亚里士多德", "培根", "密尔", "杜威", "萨特"], 
+                color: "#00d9ff",
+                class: "doer"
+            },
+            C: { 
+                code: "HUGS",
+                fullname: "Harmony Unity Group Spirit",
+                name: "社群主义者", 
+                title: "The Communitarian", 
+                motto: "仁者爱人，和而不同",
+                desc: "你重视关系与归属，相信个人在社群中获得意义，传统中蕴含着智慧。你关注人与人之间的联结，追求和谐与共识。对你而言，伦理不是孤立的判断，而是嵌入在具体的社会角色和文化脉络中的实践。", 
+                philosophers: ["孔子", "孟子", "黑格尔", "麦金泰尔", "查尔斯·泰勒"], 
+                color: "#feca57",
+                class: "hugs"
+            },
+            D: { 
+                code: "TRAN",
+                fullname: "Transcendence",
+                name: "超越主义者", 
+                title: "The Transcendentalist", 
+                motto: "道法自然，万物皆流",
+                desc: "你向往自由与超越，不拘泥于固定的框架，善于在流动中把握生命的真谛。你直觉敏锐，内心丰富，对神秘和不可言说之物保持开放。你的智慧不在于掌控，而在于顺应；不在于占有，而在于体验。", 
+                philosophers: ["老子", "庄子", "斯宾诺莎", "尼采", "海德格尔"], 
+                color: "#5f27cd",
+                class: "tran"
+            }
         };
 
         // 记录已回答的问题
@@ -561,25 +688,33 @@
             resultSection.style.display = 'block';
             resultSection.innerHTML = `
                 <div class="result-card">
-                    <div class="result-type">${maxType}</div>
-                    <div class="result-name">${result.name} · ${result.title}</div>
+                    <div class="result-code">
+                        <div class="result-code-main">${result.code}</div>
+                        <div class="result-code-sub">${result.fullname}</div>
+                    </div>
+                    
+                    <div class="result-type">${result.name}</div>
+                    <div class="result-title">${result.title}</div>
+                    
+                    <div class="result-motto">"${result.motto}"</div>
+                    
                     <div class="result-desc">${result.desc}</div>
                     
                     <div class="dimension-bars">
                         <div class="dimension">
-                            <span class="dim-label">理性</span>
+                            <span class="dim-label">LOGI</span>
                             <div class="dim-bar"><div class="dim-fill a" style="width: ${percentages.A}%">${percentages.A}%</div></div>
                         </div>
                         <div class="dimension">
-                            <span class="dim-label">实践</span>
+                            <span class="dim-label">DOER</span>
                             <div class="dim-bar"><div class="dim-fill b" style="width: ${percentages.B}%">${percentages.B}%</div></div>
                         </div>
                         <div class="dimension">
-                            <span class="dim-label">社群</span>
+                            <span class="dim-label">HUGS</span>
                             <div class="dim-bar"><div class="dim-fill c" style="width: ${percentages.C}%">${percentages.C}%</div></div>
                         </div>
                         <div class="dimension">
-                            <span class="dim-label">超越</span>
+                            <span class="dim-label">TRAN</span>
                             <div class="dim-bar"><div class="dim-fill d" style="width: ${percentages.D}%">${percentages.D}%</div></div>
                         </div>
                     </div>
@@ -588,6 +723,28 @@
                         <h3>🎓 与你气质相近的思想家</h3>
                         <div class="philosopher-list">
                             ${result.philosophers.map(p => `<span class="philosopher-tag">${p}</span>`).join('')}
+                        </div>
+                    </div>
+
+                    <div class="type-comparison">
+                        <h3>四种哲学人格类型</h3>
+                        <div class="type-grid">
+                            <div class="type-item logi ${maxType === 'A' ? 'active' : ''}">
+                                <div class="type-code">LOGI</div>
+                                <div class="type-name">理性主义</div>
+                            </div>
+                            <div class="type-item doer ${maxType === 'B' ? 'active' : ''}">
+                                <div class="type-code">DOER</div>
+                                <div class="type-name">实践主义</div>
+                            </div>
+                            <div class="type-item hugs ${maxType === 'C' ? 'active' : ''}">
+                                <div class="type-code">HUGS</div>
+                                <div class="type-name">社群主义</div>
+                            </div>
+                            <div class="type-item tran ${maxType === 'D' ? 'active' : ''}">
+                                <div class="type-code">TRAN</div>
+                                <div class="type-name">超越主义</div>
+                            </div>
                         </div>
                     </div>
 
